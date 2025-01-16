@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Comment this out when testing your built library files -->
+    <script type="module" src="/src/entry.tsx"></script>
+
+    <!-- Uncomment these two lines to test your built library files -->
+    <!-- <script src="/dist/custom-form/custom-form.js"></script>
+    <link rel="stylesheet" href="/dist/custom-form/custom-form.css"> -->
+
+    <title>Custom Hosted Form - React</title>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script>
+      const element = document.getElementById('root');
+      let renderTimeout;
+
+      const renderForm = () => {
+        // The page served from PCI Vault will load our custom form in a similar way
+        // The options will be passed on as they are configured in the custom form [https://docs.pcivault.io/api/capture#method-post-iframe]
+        window.custom_form(element, {
+          "submit_secret": "{secret}", // set the secret from you test capture endpoint here
+          "submit_url": "/v1/capture/{unique_id}", // set the test capture endpoint url 
+          "force_keypad": false,
+          "show_card": true,
+          "disable_luhn": false,
+          "strip_spaces": false,
+          "field_options": {},
+          "reference": "unique_reference",
+          "extra_data": {
+            "capture_channel": "Website",
+          },
+          "testing": true
+        });
+      };
+
+      const renderFormWhenReady = () => {
+        if (window.custom_form == undefined) {
+          renderTimeout = setTimeout(renderFormWhenReady, 1000);
+          return;
+        }
+        clearTimeout(renderTimeout);
+        renderForm();
+      };
+
+      renderFormWhenReady();
+    </script>
+  </body>
+</html>
